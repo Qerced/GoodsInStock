@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15.3-alpine3.18
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ../.env
+
+  app:
+    build: ../
+    restart: always
+    volumes:
+      - ..:/goods_in_stock
+    depends_on:
+      - postgres
+    entrypoint: ['python', 'infra/entrypoint.py', '-p', '--app']
+    env_file:
+      - ../.env
+    ports:
+      - '8000:8000'
+
+volumes:
+  postgres_data:
